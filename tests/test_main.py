@@ -2,6 +2,7 @@ import dataflows as DF
 from elasticsearch import Elasticsearch
 from tableschema_elasticsearch import Storage
 from dataflows_elasticsearch import dump_to_es
+import time
 
 def test_basic_flow_no_mapping_type():
 
@@ -26,6 +27,7 @@ def test_basic_flow_no_mapping_type():
         ),
     ).process()
 
+    time.sleep(1)
     out = list(Storage(Elasticsearch(hosts=[conn_str])).read('test_basic_flow_no_mapping_type'))
     assert data == sorted(out, key=lambda r: r['key'])
 
@@ -53,6 +55,7 @@ def test_basic_flow_with_mapping_type():
         ),
     ).process()
 
+    time.sleep(1)
     out = list(Storage(Elasticsearch(hosts=[conn_str])).read('test_basic_flow_with_mapping_type', doc_type='mydoc'))
     assert data == sorted(out, key=lambda r: r['key'])
 
