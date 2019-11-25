@@ -19,14 +19,14 @@ def test_basic_flow_no_mapping_type():
         dump_to_es(
             engine=conn_str,
             indexes=dict(
-                test_basic_flow=[dict(
+                test_basic_flow_no_mapping_type=[dict(
                     resource_name='data'
                 )]
             )
         ),
     ).process()
 
-    out = list(Storage(Elasticsearch(hosts=[conn_str])).read('test_basic_flow'))
+    out = list(Storage(Elasticsearch(hosts=[conn_str])).read('test_basic_flow_no_mapping_type'))
     assert data == sorted(out, key=lambda r: r['key'])
 
 def test_basic_flow_with_mapping_type():
@@ -45,7 +45,7 @@ def test_basic_flow_with_mapping_type():
         dump_to_es(
             engine=conn_str,
             indexes=dict(
-                test_basic_flow=[dict(
+                test_basic_flow_with_mapping_type=[dict(
                     doc_type='mydoc',
                     resource_name='data'
                 )]
@@ -53,7 +53,7 @@ def test_basic_flow_with_mapping_type():
         ),
     ).process()
 
-    out = list(Storage(Elasticsearch(hosts=[conn_str])).read('test_basic_flow', doc_type='mydoc'))
+    out = list(Storage(Elasticsearch(hosts=[conn_str])).read('test_basic_flow_with_mapping_type', doc_type='mydoc'))
     assert data == sorted(out, key=lambda r: r['key'])
 
 if __name__ == '__main__':
