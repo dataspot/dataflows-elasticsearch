@@ -1,0 +1,25 @@
+sudo: false
+language: python
+python:
+- 3.7
+env:
+  global:
+  - TOXENV="py${PYTHON_VERSION//./}"
+install:
+- make install
+- pip install coveralls
+before_script:
+- "./start_elasticsearch.sh"
+script:
+- make test
+after_success:
+- coveralls
+deploy:
+  provider: pypi
+  user: akariv
+  distributions: sdist bdist_wheel
+  skip_cleanup: true
+  on:
+    tags: true
+  password:
+    secure: lDG90iKe/kq/IwYHjx3cn7IZeLpvSTCj3rxcS1nyfvb/V2ciXZ45EUZm/A9lFtYMaH8Q7cFOjBVfH8GYebnDkahorY26v0+YtoqCLplHDIKDHgnUgyVOKStOMww5c/geW1am59OO/EMyturn7fgPgtwAujNNE7SKAJ8Sy3FOl4aH/VMK0BJU6NkHzJ3JFTsKrCRP+YmWJLDMTrPA4ERzSbuiobpTFDDdRveo38XJzxDXQMSLO7bIkk/FlP+kNqRuc6otf9YEtPv35vxl8TSTzLwMd5/CT4RwkswCVs8Xavwu897qqq25vxjGqpzOZZbpACnL+YGJVU4T/34fZNZOJWLSfhhUZkB/RZ4/ZHoOuSXnbHojcB0r2HyCreMRKCFI4nEC7eemvKqmM6z4WCaiJ9o2JdEDNkTkKpbwOmiiFooKbkR06ZgjlARJ6jKSjOXLXmrHN4bIo2cdN08/MLvaUSPiuJEhrr3US1r8HiJ0c39BepBOcwiXrwXXeIR9bM00Ev60iE3HxbVHaT0s0qrl++p6hOfiFRJwGvHvhte4VFA4FYVHf+cRyx+q3xlN7kY7zxtzp10Wfia8SEGL5KxGafrNRmCQywPwkA7nHatlps9pNtzU0ggiin7zmmEExaX8sEvO9l8oOcPXCyvBrXaS8NP5hG9YAgwArnjEy0sR9Dk=
