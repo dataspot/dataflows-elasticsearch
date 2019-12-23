@@ -70,17 +70,17 @@ class ESDumper(DumperBase):
                            mapping_generator_cls=self.mapper_cls,
                            index_settings=self.index_settings)
 
-            def normalizer(rows):
-                for row in rows:
-                    yield self.normalize(row, res)
-
-            return storage.write(index_name, doc_type, normalizer(resource),
+            return storage.write(index_name, doc_type, self.normalizer(resource),
                                  primary_key, as_generator=True)
 
-    def normalize(self, row, resource):
+    def normalizer(self, resource: ResourceWrapper):
+        for row in resource:
+            yield self.normalize(row, resource)
+
+    def normalize(self, row, resource: ResourceWrapper = None):
         if isinstance(row, dict):
             return dict(
-                (k, normalize(v))
+                (k, self.normalize(v))
                 for k, v in row.items()
             )
         elif isinstance(row, (str, int, float, bool, datetime.date)):
@@ -88,8 +88,7 @@ class ESDumper(DumperBase):
         elif isinstance(row, decimal.Decimal):
             return float(row)
         elif isinstance(row, (list, set)):
-            return [normalize(x) for x in row]
+            return [self.normalize(x) for x in row]
         elif row is None:
             return None
         assert False, "Don't know how to handle row (%s) %r" % (type(row), row)
-
