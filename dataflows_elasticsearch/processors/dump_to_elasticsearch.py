@@ -10,23 +10,6 @@ from dataflows.processors.dumpers.dumper_base import DumperBase
 from dataflows import ResourceWrapper
 
 
-def normalize(obj):
-    if isinstance(obj, dict):
-        return dict(
-            (k, normalize(v))
-            for k, v in obj.items()
-        )
-    elif isinstance(obj, (str, int, float, bool, datetime.date)):
-        return obj
-    elif isinstance(obj, decimal.Decimal):
-        return float(obj)
-    elif isinstance(obj, (list, set)):
-        return [normalize(x) for x in obj]
-    elif obj is None:
-        return None
-    assert False, "Don't know how to handle object (%s) %r" % (type(obj), obj)
-
-
 class ESDumper(DumperBase):
 
     def __init__(self, *, indexes,
@@ -89,7 +72,24 @@ class ESDumper(DumperBase):
 
             def normalizer(rows):
                 for row in rows:
-                    yield normalize(row)
+                    yield self.normalize(row)
 
             return storage.write(index_name, doc_type, normalizer(resource),
                                  primary_key, as_generator=True)
+
+    def normalize(self, obj):
+        if isinstance(obj, dict):
+            return dict(
+                (k, normalize(v))
+                for k, v in obj.items()
+            )
+        elif isinstance(obj, (str, int, float, bool, datetime.date)):
+            return obj
+        elif isinstance(obj, decimal.Decimal):
+            return float(obj)
+        elif isinstance(obj, (list, set)):
+            return [normalize(x) for x in obj]
+        elif obj is None:
+            return None
+        assert False, "Don't know how to handle object (%s) %r" % (type(obj), obj)
+
