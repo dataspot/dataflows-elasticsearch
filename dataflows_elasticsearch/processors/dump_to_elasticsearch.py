@@ -17,7 +17,8 @@ class ESDumper(DumperBase):
                  index_settings=None,
                  engine='env://DATAFLOWS_ELASTICSEARCH',
                  reindex=False,
-                 options={}):
+                 options={},
+                 elasticsearch_options={}):
         super(ESDumper, self).__init__(options=options)
         self.index_to_resource = indexes
         self.mapper_cls = mapper_cls
@@ -25,6 +26,7 @@ class ESDumper(DumperBase):
         self.connection_info = engine
         self.reindex = reindex
         self.converted_resources = {}
+        self.elasticsearch_options = elasticsearch_options
 
     def initialize(self):
         super(ESDumper, self).initialize()
@@ -35,7 +37,7 @@ class ESDumper(DumperBase):
                 assert self.connection_info is not None, \
                     "Couldn't connect to ES Instance - " \
                     "Please set your '%s' environment variable" % env_var
-            self.engine = Elasticsearch(hosts=[self.connection_info])
+            self.engine = Elasticsearch(hosts=[self.connection_info], **self.elasticsearch_options)
         else:
             assert isinstance(self.connection_info, Elasticsearch)
             self.engine = self.connection_info

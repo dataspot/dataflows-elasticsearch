@@ -17,8 +17,7 @@ Dataflows's processors to work with ElasticSearch
     - [Installation](#installation)
     - [Examples](#examples)
   - [Documentation](#documentation)
-    - [dump_to_s3](#dump_to_s3)
-    - [change_acl_on_s3](#change_acl_on_s3)
+    - [dump_to_es](#dump_to_es)
   - [Contributing](#contributing)
   - [Changelog](#changelog)
 
@@ -31,21 +30,18 @@ Dataflows's processors to work with ElasticSearch
 The package use semantic versioning. It means that major versions  could include breaking changes. It's recommended to specify `package` version range in your `setup/requirements` file e.g. `package>=1.0,<2.0`.
 
 ```bash
-$ pip install dataflows-awelasticsearchs
+$ pip install dataflows-elasticsearch
 ```
 
 ### Examples
 
-These processors have to be used as a part of data flow. For example:
+These processors have to be used as a part of a dataflows `Flow`. For example:
 
 ```python
 flow = Flow(
     load('data/data.csv'),
-    dump_to_s3(
-        bucket=bucket,
-        acl='private',
-        path='my/datapackage',
-        endpoint_url=os.environ['S3_ENDPOINT_URL'],
+    dump_to_es(
+        engine='localhost:9200',
     ),
 )
 flow.process()
@@ -53,28 +49,28 @@ flow.process()
 
 ## Documentation
 
-### dump_to_s3
+### dump_to_es
 
-Saves the DataPackage to AWS S3.
-
-#### Parameters
-
-- `bucket` - Name of the bucket where DataPackage will be stored (should already be created!)
-- `acl` - ACL to provide the uploaded files. Default is 'public-read' (see [boto3 docs](http://boto3.readthedocs.io/en/latest/reference/services/s3.html#S3.Client.put_object) for more info).
-- `path` - Path (key/prefix) to the DataPackage. May contain format string available for `datapackage.json` Eg: `my/example/path/{owner}/{name}/{version}`
-- `content_type` - content type to use when storing files in S3. Defaults to text/plain (usual S3 default is binary/octet-stream but we prefer text/plain).
-- `endpoint_url` - api endpoint to allow using S3 compatible services (e.g. 'https://ams3.digitaloceanspaces.com')
-
-### change_acl_on_s3
-
-Changes ACL of object in given Bucket with given path aka prefix.
+Saves the Flow to an ElasticSearch Index.
 
 #### Parameters
-
-- `bucket` - Name of the bucket where objects are stored
-- `acl` - Available options `'private'|'public-read'|'public-read-write'|'authenticated-read'|'aws-exec-read'|'bucket-owner-read'|'bucket-owner-full-control'`
-- `path` - Path (key/prefix) to the DataPackage.
-- `endpoint_url` - api endpoint to allow using S3 compatible services (e.g. 'https://ams3.digitaloceanspaces.com')
+- `indexes` - Mapping of indexe names to resource names, e.g.
+```
+{
+  'index-name-1': {
+    'resource-name': 'resource-name-1',
+  },
+  'index-name-2': {
+    'resource-name': 'resource-name-2',
+  },
+  # ...
+}
+```
+- `mapper_cls` - Class to be used to map json table schema types into ElasticSearch types
+- `index_settings` - Options to be used when creating the ElasticSearch index
+- `engine` - Connection string for connecting the ElasticSearch instance, or an `Elasticsearch` object.
+             Can also be of the form `env://ENV_VAR`, in which case the connection string will be fetched from the environment variable `ENV_VAR`.
+- `elasticsearch_options` - Options to be used when creating the `Elasticsearch` object (in case it wasn't provided)
 
 ## Contributing
 
@@ -118,8 +114,4 @@ and `mock` packages. These packages are available only in tox envionments.
 
 ## Changelog
 
-Here described only breaking and the most important changes. The full changelog and documentation for all released versions can be found in the nicely formatted [commit history](https://github.com/frictionlessdata/dataflows-aws/commits/master).
-
-#### v0.x
-
-- an initial processors implementation
+The full changelog and documentation for all released versions can be found in the nicely formatted [commit history](https://github.com/dataspot/dataflows-elasticsearch/commits/master).
