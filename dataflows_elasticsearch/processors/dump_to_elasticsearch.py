@@ -87,7 +87,7 @@ class ESDumper(DumperBase):
             return row
         elif isinstance(row, decimal.Decimal):
             return float(row)
-        elif isinstance(row, (list, set)):
+        elif isinstance(row, (list, set, tuple)):
             return [self.normalize(x) for x in row]
         elif row is None:
             return None
