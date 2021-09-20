@@ -24,7 +24,7 @@ INSTALL_REQUIRES = [
     'six',
     'elasticsearch',
     'dataflows',
-    'tableschema_elasticsearch',
+    'tableschema_elasticsearch>=2',
 ]
 TESTS_REQUIRE = [
     'moto[server]',
