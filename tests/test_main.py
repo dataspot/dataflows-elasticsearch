@@ -48,7 +48,6 @@ def test_basic_flow_with_mapping_type():
             engine=conn_str,
             indexes=dict(
                 test_basic_flow_with_mapping_type=[dict(
-                    doc_type='mydoc',
                     resource_name='data'
                 )]
             )
@@ -56,7 +55,7 @@ def test_basic_flow_with_mapping_type():
     ).process()
 
     time.sleep(1)
-    out = list(Storage(Elasticsearch(hosts=[conn_str])).read('test_basic_flow_with_mapping_type', doc_type='mydoc'))
+    out = list(Storage(Elasticsearch(hosts=[conn_str])).read('test_basic_flow_with_mapping_type'))
     assert data == sorted(out, key=lambda r: r['key'])
 
 if __name__ == '__main__':
