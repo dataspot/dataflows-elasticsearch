@@ -64,7 +64,7 @@ class ESDumper(DumperBase):
             converted_resource = self.converted_resources[resource_name]
             index_name = converted_resource['index_name']
             storage = Storage(self.engine)
-            logging.info('Writing to ES %s -> %s/%s (reindex: %s)',
+            logging.info('Writing to ES %s -> %s (reindex: %s)',
                          resource_name, index_name, self.reindex)
             storage.create(index_name, res.descriptor['schema'],
                            always_recreate=False, reindex=self.reindex,
