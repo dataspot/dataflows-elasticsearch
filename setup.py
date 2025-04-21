@@ -22,7 +22,6 @@ PACKAGE = 'dataflows_elasticsearch'
 NAME = PACKAGE.replace('_', '-')
 INSTALL_REQUIRES = [
     'six',
-    'elasticsearch',
     'dataflows',
     'tableschema_elasticsearch>=2',
 ]
