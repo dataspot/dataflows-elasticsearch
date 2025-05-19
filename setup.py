@@ -32,7 +32,7 @@ TESTS_REQUIRE = [
     'pylama',
     'mock',
     'tox',
-    'setuptools==71.0.0',
+    'setuptools==78.1.1',
 ]
 README = read('README.md')
 VERSION = read(PACKAGE, 'VERSION')
